@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "bookId": 16,
+    "userId": 1,
+    "startDate": "2023-10-10",
+    "returnDate": "2023-10-10",
+    "returned": true
+  },
+  {
+    "id": 2,
+    "bookId": 16,
+    "userId": 2,
+    "startDate": "2023-09-10",
+    "returnDate": "2023-09-30",
+    "returned": true
+  }
+]

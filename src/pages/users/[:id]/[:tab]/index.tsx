@@ -1,12 +1,29 @@
 import React from "react";
 import { NavLink, useParams } from "react-router-dom";
 
-import { generatePath, useData } from "../../../../services/routing";
 import { User } from "../../../../features/users";
+import { useFetch } from "../../../../services/api";
+import { generatePath } from "../../../../services/routing";
+import { History, HistoryCard } from "../../../../features/history";
 
 export const Component: React.FC = () => {
-  const user = useData<User>();
-  const { tab } = useParams<{ id: string; tab: string }>();
+  const { tab, id } = useParams<{ id: string; tab: string }>();
+
+  const {
+    data: [user],
+    loading: userLoading,
+  } = useFetch<User>("/users.json", (data) =>
+    data.filter((d) => d.id.toString() === id)
+  );
+
+  const { data: userHistory, loading: historyLoading } = useFetch<History>(
+    "/history.json",
+    (data) => data.filter((d) => d.userId.toString() === id)
+  );
+
+  if (userLoading || historyLoading) {
+    return null;
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -16,10 +33,14 @@ export const Component: React.FC = () => {
       </div>
 
       <div className="flex gap-2">
-        <NavLink to={generatePath("/users/:id", { id: user.id.toString() })}>
+        <NavLink
+          className="border-solid border-[1px] border-pink-600 px-2"
+          to={generatePath("/users/:id", { id: user.id.toString() })}
+        >
           Overview
         </NavLink>
         <NavLink
+          className="border-solid border-[1px] border-pink-600 px-2"
           to={generatePath("/users/:id/:tab?", {
             id: user.id.toString(),
             tab: "address",
@@ -28,6 +49,7 @@ export const Component: React.FC = () => {
           Address
         </NavLink>
         <NavLink
+          className="border-solid border-[1px] border-pink-600 px-2"
           to={generatePath("/users/:id/:tab?", {
             id: user.id.toString(),
             tab: "history",
@@ -39,7 +61,15 @@ export const Component: React.FC = () => {
 
       {tab === "" && <div>{user.website}</div>}
 
-      {tab === "history" && <h4>History</h4>}
+      {tab === "history" && (
+        <div>
+          <h4>History</h4>
+
+          {userHistory.map((item) => (
+            <HistoryCard key={item.id} history={item} />
+          ))}
+        </div>
+      )}
 
       {tab === "address" && (
         <div>

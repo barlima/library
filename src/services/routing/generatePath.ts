@@ -1,5 +1,7 @@
-import { generatePath as genPath } from "react-router-dom";
+import { PathParam, generatePath as genPath } from "react-router-dom";
 import { routes } from "./router";
+
+// Paths preparation
 
 type Route = {
   path?: string;
@@ -28,20 +30,44 @@ type AvailableRoutes = RemoveTrailingBackslash<
   GetAvailableRoutes<typeof routes>
 >;
 
-type GeneratePathParams<T extends string> = Parameters<typeof genPath<T>>[1];
+// Function preparation
 
+// Option 1
+// type GeneratePathParams<T extends string> = Parameters<typeof genPath<T>>[1];
+
+// Option 2
 type RoutesWithTabs = {
   [K in AvailableRoutes]: K extends `${string}/:tab${string | ""}` ? K : never;
 }[AvailableRoutes];
 
+// Tabs preparation
+
 const possibleTabs = {
-  "/books/:id/:tab?": ["", "history"],
-  "/users/:id/:tab?": ["", "address", "history"],
+  "/books/:id/:tab?": ["", "history", "reviews"],
+  "/users/:id/:tab?": ["", "address", "history", "reviews"],
 } as const satisfies Record<RoutesWithTabs, Readonly<string[]>>;
+
+type InferRoot<T extends string> = T extends `/${infer TRoot}/:id/${string}`
+  ? TRoot
+  : never;
+
+export type PossibleTabs = {
+  [K in keyof typeof possibleTabs as InferRoot<K>]: (typeof possibleTabs)[K][number];
+};
+
+// Final function
+
+type Params<TRoute extends AvailableRoutes> = {
+  [key in PathParam<TRoute>]: key extends "tab"
+    ? TRoute extends RoutesWithTabs
+      ? (typeof possibleTabs)[TRoute][number]
+      : never
+    : string | null;
+};
 
 export const generatePath = <TRoute extends AvailableRoutes>(
   path: TRoute,
-  params: GeneratePathParams<TRoute>
+  params: Params<TRoute>
 ) => {
   return genPath(path, params);
 };

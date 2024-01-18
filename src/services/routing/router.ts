@@ -1,5 +1,4 @@
-import { LoaderFunction, createBrowserRouter } from "react-router-dom";
-import { request } from "../api";
+import { RouteObject, createBrowserRouter } from "react-router-dom";
 
 export const routes = {
   path: "/",
@@ -15,7 +14,6 @@ export const routes = {
         {
           index: true,
           lazy: () => import("../../pages/books"),
-          loader: async () => request("/books.json"),
         },
         {
           path: ":id",
@@ -24,8 +22,6 @@ export const routes = {
               index: true,
               path: ":tab?",
               lazy: () => import("../../pages/books/[:id]/[:tab]"),
-              loader: (async ({ params }) =>
-                request(`/books.json?id=${params.id}`)) as LoaderFunction<any>,
             },
           ],
         },
@@ -37,7 +33,6 @@ export const routes = {
         {
           index: true,
           lazy: () => import("../../pages/users"),
-          loader: async () => request("/users.json"),
         },
         {
           path: ":id",
@@ -46,8 +41,6 @@ export const routes = {
               index: true,
               path: ":tab?",
               lazy: () => import("../../pages/users/[:id]/[:tab]"),
-              loader: (async ({ params }) =>
-                request(`/users.json?id=${params.id}`)) as LoaderFunction<any>,
             },
           ],
         },
@@ -56,59 +49,8 @@ export const routes = {
   ],
 } as const;
 
+const isRouteObject = (obj: unknown): obj is RouteObject => true;
+
 export const router = createBrowserRouter([
-  {
-    path: "/",
-    lazy: () => import("../../layout/Layout"),
-    children: [
-      {
-        index: true,
-        lazy: () => import("../../pages"),
-      },
-      {
-        path: "books",
-        children: [
-          {
-            index: true,
-            lazy: () => import("../../pages/books"),
-            loader: async () => request("/books.json"),
-          },
-          {
-            path: ":id",
-            children: [
-              {
-                path: ":tab?",
-                lazy: () => import("../../pages/books/[:id]/[:tab]"),
-                loader: async ({ params }) =>
-                  request(`/books.json?id=${params.id}`),
-              },
-            ],
-          },
-        ],
-      },
-      {
-        path: "users",
-        children: [
-          {
-            index: true,
-            lazy: () => import("../../pages/users"),
-            loader: async () => request("/users.json"),
-          },
-          {
-            path: ":id",
-            children: [
-              {
-                path: ":tab?",
-                lazy: () => import("../../pages/users/[:id]/[:tab]"),
-                loader: (async ({ params }) =>
-                  request(
-                    `/users.json?id=${params.id}`
-                  )) as LoaderFunction<any>,
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  },
+  isRouteObject(routes) ? routes : {},
 ]);
