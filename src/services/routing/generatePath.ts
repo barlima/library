@@ -1,4 +1,8 @@
-import { PathParam, generatePath as genPath } from "react-router-dom";
+import {
+  PathParam,
+  generatePath as genPath,
+  RouteObject,
+} from "react-router-dom";
 import { routes } from "./router";
 
 // Paths preparation
@@ -8,6 +12,9 @@ type Route = {
   index?: boolean;
   children?: Readonly<Route[]>;
 };
+// type Route = Readonly<Omit<RouteObject, "lazy" | "children">> & {
+//   children?: Readonly<Route[]>;
+// };
 
 type RemoveInitialBackslash<T extends string> = T extends `/${infer U}` ? U : T;
 type RemoveTrailingBackslash<T extends string> = T extends `${infer U}/`
@@ -26,6 +33,8 @@ type GetAvailableRoutes<TRouter extends Route> = TRouter["path"] extends string
     : TRouter["path"]
   : "";
 
+// type Routes = GetAvailableRoutes<typeof routes>
+
 type AvailableRoutes = RemoveTrailingBackslash<
   GetAvailableRoutes<typeof routes>
 >;
@@ -33,11 +42,20 @@ type AvailableRoutes = RemoveTrailingBackslash<
 // Function preparation
 
 // Option 1
-// type GeneratePathParams<T extends string> = Parameters<typeof genPath<T>>[1];
+
+type GeneratePathParams<T extends string> = Parameters<typeof genPath<T>>[1];
+
+export const generatePath = <TRoute extends AvailableRoutes>(
+  path: TRoute,
+  params: GeneratePathParams<TRoute>
+) => {
+  return genPath(path, params);
+};
 
 // Option 2
+
 type RoutesWithTabs = {
-  [K in AvailableRoutes]: K extends `${string}/:tab${string | ""}` ? K : never;
+  [K in AvailableRoutes]: K extends `${string}/:tab${"?" | ""}` ? K : never;
 }[AvailableRoutes];
 
 // Tabs preparation
@@ -65,9 +83,11 @@ type Params<TRoute extends AvailableRoutes> = {
     : string | null;
 };
 
-export const generatePath = <TRoute extends AvailableRoutes>(
-  path: TRoute,
-  params: Params<TRoute>
-) => {
-  return genPath(path, params);
-};
+// export const generatePath2 = <TRoute extends AvailableRoutes>(
+//   path: TRoute,
+//   params: Params<TRoute>
+// ) => {
+//   return genPath(path, params);
+// };
+
+// generatePath2("/users/:id/:tab?", { id: '12', tab: 'history' })

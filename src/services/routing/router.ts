@@ -49,8 +49,15 @@ export const routes = {
   ],
 } as const;
 
+
 const isRouteObject = (obj: unknown): obj is RouteObject => true;
 
-export const router = createBrowserRouter([
+export const router2 = createBrowserRouter([
   isRouteObject(routes) ? routes : {},
 ]);
+
+// Better option
+
+// export const router = createBrowserRouter([
+//   routes
+// ]);
