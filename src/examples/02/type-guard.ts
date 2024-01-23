@@ -56,7 +56,9 @@ function fiz(x: unknown): asserts x is number {
 const xyz: unknown = 10;
 
 type test1 = [Expect<Exact<typeof xyz, unknown>>];
+// @ts-expect-error
+type test2 = [Expect<Exact<typeof xyz, number>>];
 
 fiz(xyz);
 
-type test2 = [Expect<Exact<typeof xyz, number>>];
+type test3 = [Expect<Exact<typeof xyz, number>>];

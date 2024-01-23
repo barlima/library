@@ -1,6 +1,7 @@
 import { Exact, Expect } from "../../utils/types";
 
 const john = "John" as const;
+// const john = <const>"John";
 
 type test1 = [
   Expect<Exact<typeof john, "John">>,
@@ -29,7 +30,7 @@ list[0] = 10;
 type test3 = [
   Expect<Exact<typeof list, Readonly<[1, 2, 3, 4]>>>,
   Expect<Exact<typeof list, Readonly<number[]>>>,
-  Expect<Exact<typeof list[0], 1>>,
+  Expect<Exact<(typeof list)[0], 1>>,
   // @ts-expect-error
   Expect<Exact<typeof list, number[]>>,
   // @ts-expect-error

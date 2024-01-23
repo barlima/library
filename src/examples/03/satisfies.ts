@@ -51,3 +51,6 @@ const userB = {
     },
   ],
 } as const satisfies User;
+
+typeof userA["name"];
+typeof userB["name"];

@@ -52,7 +52,7 @@ export const Component: React.FC = () => {
           className="border-solid border-[1px] border-pink-600 px-2"
           to={generatePath("/books/:id/:tab?", {
             id: book.id.toString(),
-            tab: "history",
+            tab: "reviews",
           })}
         >
           Reviews

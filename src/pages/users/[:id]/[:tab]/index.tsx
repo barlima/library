@@ -57,6 +57,15 @@ export const Component: React.FC = () => {
         >
           History
         </NavLink>
+        <NavLink
+          className="border-solid border-[1px] border-pink-600 px-2"
+          to={generatePath("/users/:id/:tab?", {
+            id: user.id.toString(),
+            tab: "reviews",
+          })}
+        >
+          Reviews
+        </NavLink>
       </div>
 
       {tab === "" && <div>{user.website}</div>}
@@ -78,6 +87,8 @@ export const Component: React.FC = () => {
           <p>{user.address?.zipcode}</p>
         </div>
       )}
+
+      {tab === "reviews" && <h4>Reviews</h4>}
     </div>
   );
 };

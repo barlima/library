@@ -7,19 +7,21 @@ import { routes } from "./router";
 
 // Paths preparation
 
-type Route = {
-  path?: string;
-  index?: boolean;
-  children?: Readonly<Route[]>;
-};
-// type Route = Readonly<Omit<RouteObject, "lazy" | "children">> & {
+// type Route = {
+//   path?: string;
+//   index?: boolean;
 //   children?: Readonly<Route[]>;
 // };
+type Route = Readonly<Omit<RouteObject, "lazy" | "children">> & {
+  children?: Readonly<Route[]>;
+};
 
-type RemoveInitialBackslash<T extends string> = T extends `/${infer U}` ? U : T;
-type RemoveTrailingBackslash<T extends string> = T extends `${infer U}/`
-  ? U
-  : T;
+
+
+
+
+
+// GetAvailableRoutes
 
 type GetAvailableRoutes<TRouter extends Route> = TRouter["path"] extends string
   ? TRouter["children"] extends Readonly<Array<infer TChildren>>
@@ -29,9 +31,12 @@ type GetAvailableRoutes<TRouter extends Route> = TRouter["path"] extends string
         >}/${GetAvailableRoutes<TChildren>}`
       : never
     : TRouter["index"] extends true
-    ? TRouter["path"] | ""
-    : TRouter["path"]
+      ? TRouter["path"] | ""
+      : TRouter["path"]
   : "";
+
+type RemoveInitialBackslash<T extends string> = T extends `/${infer U}` ? U : T;
+type RemoveTrailingBackslash<T extends string> = T extends `${infer U}/` ? U : T;
 
 // type Routes = GetAvailableRoutes<typeof routes>
 
@@ -51,6 +56,17 @@ export const generatePath = <TRoute extends AvailableRoutes>(
 ) => {
   return genPath(path, params);
 };
+
+
+generatePath('/books/:id/:tab?', { id: '123', tab: 'abc'})
+
+
+
+
+
+
+
+
 
 // Option 2
 
