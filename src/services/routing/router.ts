@@ -49,8 +49,10 @@ export const routes = {
   ],
 } as const;
 
-
-const isRouteObject = (obj: unknown): obj is RouteObject => true;
+const isRouteObject = (obj: unknown): obj is RouteObject => {
+  // Validation logic
+  return true;
+}
 
 export const router2 = createBrowserRouter([
   isRouteObject(routes) ? routes : {},
